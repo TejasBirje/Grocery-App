@@ -23,7 +23,8 @@ const Footer = () => {
             <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-gray-500/30 text-gray-500">
                 <div>
                     <img className="w-34 md:w-32" src={assets.logo} alt="dummyLogoColored" />
-                    <p className='mt-2'>Say goodbye to busy aisles and long queues. Family Supermarket delivers fresh groceries and everyday essentials, right when you need them. Simple. Reliable. On time.  </p>              </div>
+                    <p className='mt-4'>Say goodbye to busy aisles and long queues. Family Supermarket delivers fresh groceries and everyday essentials, right when you need them. Simple. Reliable. On time.  </p>
+                </div>
                 <div className="flex flex-wrap justify-between w-full md:w-[45%] gap-5">
                     {footerLinks.map((section, index) => (
                         <div key={index}>

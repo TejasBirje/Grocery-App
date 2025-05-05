@@ -16,7 +16,7 @@ const Navbar = () => {
         <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">
 
             <NavLink to="/" onClick={() => setOpen(false)}>
-                <img src={assets.logo4} alt="" className='h-14'/>
+                <img src={assets.logo} alt="" />
             </NavLink>
 
             {/* Desktop Menu */}
@@ -46,8 +46,8 @@ const Navbar = () => {
 
                 {!user ? (
                     <button onClick={() => setShowUserLogin(true)} className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white rounded-full">
-                    Login
-                </button>
+                        Login
+                    </button>
                 ) : (
                     <div className='relative group'>
                         <img src={assets.profile_icon} className="w-10" alt="profile" />
