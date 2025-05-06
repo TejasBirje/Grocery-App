@@ -71,10 +71,12 @@ import quinoa_image from "./quinoa_image.png";
 import brown_rice_image from "./brown_rice_image.png";
 import barley_image from "./barley_image.png";
 import login_image from "./login_image.png";
+import add_address_image_2 from "./add_address_image_2.svg";
 
 export const assets = {
   freshly,
   logo,
+  add_address_image_2,
   login_image,
   search_icon,
   remove_icon,
