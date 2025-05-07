@@ -52,6 +52,10 @@ const Navbar = () => {
                     Contact
                 </NavLink>
 
+                <NavLink to="/seller">
+                    Seller Dashboard
+                </NavLink>
+
 
                 {/* SEARCH */}
                 <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
