@@ -1,6 +1,7 @@
 import Order from "../models/order.model.js";
 import Product from "../models/product.model.js";
 import stripe from "stripe";
+import User from "../models/user.model.js";
 
 // Place Order Cash On Delivery (COD): /api/order/cod
 export const placeOrderCOD = async (req, res) => {
@@ -145,4 +146,69 @@ export const placeOrderStripe = async (req, res) => {
     } catch (error) {
         return res.json({ success: false, message: error.message});
     }
+}
+
+// Stripe Webhook to verify payment: /stripe
+export const stripeWebhooks = async (request, response) => {
+    
+    // Create Stripe Instance
+    const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
+
+    const sig = request.headers["stripe-signature"];
+    let event;
+
+    try {
+        event = stripeInstance.webhooks.constructEvent(
+            request.body,
+            sig,
+            process.env.STRIPE_WEBHOOK_SECRET
+        )
+    } catch (error) {
+        response.status(400).send(`Webhook Error: ${error.message}`);
+    }
+
+    // handle the event
+    switch (event.type) {
+        case "payment_intent.succeeded": {
+            const payment_intent = event.data.object;
+            const paymentIntentId = payment_intent.id;
+
+            // getting the session meta data 
+
+            const session = await stripeInstance.checkout.sessions.list({
+                payment_intent: paymentIntentId
+            })
+
+            const { orderId, userId } = session.data[0].metadata;
+
+            // Make isPaid true for it
+            await Order.findByIdAndUpdate(orderId, { isPaid: true });
+
+            //clear cart items
+            await User.findByIdAndUpdate(userId, { cartItems: {}})
+            break;
+        }
+        case "payment_intent.payment.failed": {
+            const payment_intent = event.data.object;
+            const paymentIntentId = payment_intent.id;
+
+            // getting the session meta data 
+
+            const session = await stripeInstance.checkout.sessions.list({
+                payment_intent: paymentIntentId
+            })
+
+            const { orderId } = session.data[0].metadata;
+
+            // delete the payment as it has failed
+            await Order.findByIdAndDelete(orderId);
+            break;
+        }  
+        
+        default:
+            console.error(`Unhandled event type: ${event.type}`);
+            break;
+    }
+
+    response.json({ received: true })
 }

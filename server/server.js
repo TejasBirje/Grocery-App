@@ -10,6 +10,7 @@ import productRouter from "./routes/product.route.js";
 import cartRouter from "./routes/cart.route.js";
 import addressRouter from "./routes/address.route.js";
 import orderRouter from "./routes/order.route.js";
+import { stripeWebhooks } from "./controllers/order.controller.js";
 
 dotenv.config();
 
@@ -22,6 +23,9 @@ await connectCloudinary();
 
 // Allow Multiple Origins
 const allowedOrigins = ['http://localhost:5173']
+
+// endpoint to verify the stripe payment
+app.post("/stripe", express.raw({type: 'application/json'}), stripeWebhooks);
 
 // Middlewares
 app.use(express.json());
