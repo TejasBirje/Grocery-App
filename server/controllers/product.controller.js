@@ -6,27 +6,26 @@ export const addProduct = async (req, res) => {
     try {
         let productData = JSON.parse(req.body.productData);
 
-        // an array of images uploaded by user
         const images = req.files;
 
-        // contains uploaded image urls
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
-                let result = await cloudinary.uploader.upload(item.path, { resource_type: 'image'})
+                let result = await cloudinary.uploader.upload(item.path, 
+                    {resource_type: "image"})
                 return result.secure_url;
             })
         )
 
-        await Product.create({
-            ...productData, 
+        const product = await Product.create({
+            ...productData,
             image: imagesUrl
         })
 
-        res.json({ success: true, message: "Product Added Successfully"})
+        return res.json({success: true, message: "Product added successfully", product});
 
     } catch (error) {
-        console.log("Error in addProduct controller: ", error);
-        res.json({ success: false, message: error.message })
+        console.log("Error in addProduct controller.")
+        return res.json({ success: false, message: error.message})
     }
 }
 
@@ -37,7 +36,7 @@ export const productList = async (req, res) => {
         // get all products, hence we provided empty object so it gets everything
         const products = await Product.find({});
 
-        res.json({ success: true, products})
+        res.json({ success: true, products })
     } catch (error) {
         console.log("Error in productList controller: ", error);
         res.json({ success: false, message: error.message })
@@ -62,7 +61,7 @@ export const changeStock = async (req, res) => {
     try {
         const { id, inStock } = req.body;
 
-        await Product.findByIdAndUpdate(id, {inStock});
+        await Product.findByIdAndUpdate(id, { inStock });
         res.json({ success: true, message: "Stock Updated" });
     } catch (error) {
         console.log("Error in changeStock controller: ", error);

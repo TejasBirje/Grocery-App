@@ -46,7 +46,7 @@ export const register = async (req, res) => {
 
     } catch (error) {
         console.log("Error in register controller: ", error);
-        res.json({
+        return res.json({
             success: false,
             message: error.message,
         })

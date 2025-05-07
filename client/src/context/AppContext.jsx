@@ -4,6 +4,9 @@ import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
 import axios from "axios";
 
+axios.defaults.withCredentials = true;  // so we can send the cookies in the api request
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
@@ -19,9 +22,50 @@ export const AppContextProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
 
-    // function to fetch dummy products from assets
+    // fetch seller status
+    const fetchSeller = async () => {
+        try {
+            const { data } = await axios.get("/api/seller/is-auth");
+
+            if(data.success) {
+                setIsSeller(true);
+            }
+            else {
+                setIsSeller(false);
+            }
+        } catch (error) {
+            setIsSeller(false);
+            console.log("Error in fetchSeller in AppContext: ", error);
+        }
+    }
+
+    // fetch user auth status, user data and cart items
+    const fetchUser = async () => {
+        try {
+            const { data } = await axios.get("/api/user/is-auth");
+            if(data.success) {
+                setUser(data.user)
+                setCartItems(data.user.cartItems)
+            }
+        } catch (error) {
+            setUser(null);
+        }
+    }
+
+    // function to fetch products
     const fetchProducts = async () => {
-        setProducts(dummyProducts);
+        try {
+            const { data } = await axios.get("/api/product/list");
+
+            if(data.success) {
+                setProducts(data.products);
+            }
+            else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
     }
 
     // add product to cart
@@ -87,6 +131,8 @@ export const AppContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
+        fetchUser();
+        fetchSeller();
         fetchProducts();
     }, [])
 
@@ -94,7 +140,7 @@ export const AppContextProvider = ({ children }) => {
     const value = {
         navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, 
         products, setProducts, currency, addToCart, updateCartItems, removeFromCart, cartItems,
-        searchQuery, setSearchQuery, getCartAmount, getCartCount
+        searchQuery, setSearchQuery, getCartAmount, getCartCount, axios, fetchProducts,
     }
 
     return <AppContext.Provider value={value}>

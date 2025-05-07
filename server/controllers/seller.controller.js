@@ -53,6 +53,6 @@ export const sellerLogout = async (req, res) => {
         return res.json({ success: true, message: "Seller Logged Out Successfully"})
     } catch (error) {
         console.log("Error in seller logout controller: ", error);
-        res.json({ success: false, message: error.message });
+        return res.json({ success: false, message: error.message });
     }
 }
