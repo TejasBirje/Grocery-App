@@ -22,7 +22,7 @@ await connectDB();
 await connectCloudinary();
 
 // Allow Multiple Origins
-const allowedOrigins = ['http://localhost:5173']
+const allowedOrigins = ['http://localhost:5173', 'https://grocery-app-snowy.vercel.app']
 
 // endpoint to verify the stripe payment
 app.post("/stripe", express.raw({type: 'application/json'}), stripeWebhooks);
