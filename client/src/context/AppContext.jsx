@@ -134,12 +134,34 @@ export const AppContextProvider = ({ children }) => {
         fetchUser();
         fetchSeller();
         fetchProducts();
-    }, [])
+    }, []);
+
+    // useEffect(() => {
+    //     fetchProducts();
+    // }, [products])
+
+    useEffect(() => {
+        const updateCart = async () => {
+            try {
+                const { data } = await axios.post("/api/cart/update", {cartItems});
+
+                if(!data.success) {
+                    toast.error(data.message);
+                }
+            } catch (error) {
+                toast.error(error.message);
+            }
+        }
+
+        if(user) {
+            updateCart();
+        }
+    }, [cartItems])
 
     // we can access these state variables in any component
     const value = {
         navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, 
-        products, setProducts, currency, addToCart, updateCartItems, removeFromCart, cartItems,
+        products, setProducts, currency, addToCart, updateCartItems, removeFromCart, cartItems,setCartItems,
         searchQuery, setSearchQuery, getCartAmount, getCartCount, axios, fetchProducts,
     }
 

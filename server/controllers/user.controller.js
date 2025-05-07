@@ -106,7 +106,7 @@ export const isAuth = async (req, res) => {
         // const { userId } = req.body.userId
         const userId = req.userId;
 
-        console.log(userId);
+        // console.log(userId);
 
         const user = await User.findById(userId).select("-password");   // exclude the password while getting
 
